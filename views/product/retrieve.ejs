@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+  <main class="page-shell">
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">CATALOG MANAGEMENT</p>
+        <h1>Products</h1>
+        <p class="subtitle">Create and manage the products in your catalog.</p>
+      </div>
+      <a class="button button-primary" href="/products/new">Add product <span aria-hidden="true">+</span></a>
+    </header>
+
+    <% if (notice) { %>
+      <p class="notice" role="status"><%= notice %></p>
+    <% } %>
+
+    <section class="catalog" aria-label="Product catalog">
+      <div class="catalog-heading">
+        <h2>Catalog</h2>
+        <span class="count"><%= products.length %> <%= products.length === 1 ? 'item' : 'items' %></span>
+      </div>
+      <% if (products.length) { %>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr><th>Product</th><th>Description</th><th>Price</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+              <% products.forEach(product => { %>
+                <tr>
+                  <td class="product-name"><%= product.name %></td>
+                  <td class="description-cell"><%= product.description || 'No description' %></td>
+                  <td class="price-cell"><%= Number(product.price).toFixed(2) %></td>
+                  <td>
+                    <div class="row-actions">
+                      <a class="text-action" href="/products/<%= product.id %>/edit">Edit</a>
+                      <form action="/products/<%= product.id %>/delete" method="post" onsubmit="return confirm('Delete this product?')">
+                        <button class="text-action danger-action" type="submit">Delete</button>
+                      </form>
+                      <form class="email-form" action="/products/send_product_email/<%= product.id %>" method="get">
+                        <label class="visually-hidden" for="email-<%= product.id %>">Recipient email for <%= product.name %></label>
+                        <input id="email-<%= product.id %>" name="email" type="email" placeholder="Recipient email" required>
+                        <button class="text-action" type="submit">Send</button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <div class="empty-state">
+          <span class="empty-mark" aria-hidden="true">+</span>
+          <h3>Your catalog is empty</h3>
+          <p>Add your first product to get started.</p>
+          <a class="button button-secondary" href="/products/new">Create a product</a>
+        </div>
+      <% } %>
+    </section>
+    <footer class="page-footer">LOCAL CATALOG <span>•</span> <%= products.length %> RECORDS</footer>
+  </main>
+</body>
+</html>
